@@ -1,38 +1,50 @@
 package org.example.controller;
 
 import org.example.model.Product;
+import org.example.model.Review;
+import org.example.repository.ProductRepository;
 import org.example.service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/products")
-@CrossOrigin(origins = "http://localhost:5173") // Allow frontend access
+@RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:5173") // frontend
 public class ProductController {
-
+    @Autowired
     private final ProductService service;
 
-    // Constructor-based dependency injection
+
+    @Autowired
+    private ProductRepository productRepo;
+
+
+
+
     public ProductController(ProductService service) {
         this.service = service;
     }
 
-    // Get all products
-    @GetMapping
-    public List<Product> getAllProducts() {
-        return service.getAllProducts();
+    @GetMapping("/{id}")
+    public Product getProduct(@PathVariable Long id) {
+        return service.getProductById(id);
     }
 
-    // Get products by category
-    @GetMapping("/category/{category}")
-    public List<Product> getProductsByCategory(@PathVariable String category) {
-        return service.getProductsByCategory(category);
+    //CHECK THE FORMAT OF THE OUTPUT
+    @GetMapping("/{id}/reviews")
+    public List<Review> getReviews(@PathVariable Long id) {
+        return service.getReviewsByProductId(id);
     }
+    @GetMapping("/products")
+    public List<Product> getAllProducts() {
+        return productRepo.findAll();
+    }
+
     @GetMapping("/categories")
-    public List<String> getCategories() {
+    public List<String> getAllCategories() {
         return service.getAllCategories();
     }
-
 
 }
