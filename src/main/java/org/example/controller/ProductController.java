@@ -10,18 +10,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:5173") // frontend
+@RequestMapping("/product")
+@CrossOrigin(origins = {"http://localhost:5173", "http://192.168.1.4:5173"})
+// frontend
 public class ProductController {
     @Autowired
     private final ProductService service;
 
-
+   
     @Autowired
     private ProductRepository productRepo;
-
-
-
 
     public ProductController(ProductService service) {
         this.service = service;
@@ -33,11 +31,11 @@ public class ProductController {
     }
 
     //CHECK THE FORMAT OF THE OUTPUT
-    @GetMapping("/{id}/reviews")
+    @GetMapping("/reviews/{id}")
     public List<Review> getReviews(@PathVariable Long id) {
         return service.getReviewsByProductId(id);
     }
-    @GetMapping("/products")
+    @GetMapping("/list")
     public List<Product> getAllProducts() {
         return productRepo.findAll();
     }
@@ -46,5 +44,12 @@ public class ProductController {
     public List<String> getAllCategories() {
         return service.getAllCategories();
     }
+
+    @GetMapping("/category/{categoryName}")
+    public List<Product> getProductsByCategory(@PathVariable String categoryName) {
+        return productRepo.findByCategory(categoryName);
+    }
+
+
 
 }
