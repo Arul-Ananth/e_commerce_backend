@@ -14,6 +14,8 @@ public class Product {
     private String description;
     private String category;
     private double price;
+    @ElementCollection
+    private List<String> images; // URLs like http://localhost:8080/images/p1.jpg
 
     public Long getId() {
         return id;
@@ -62,9 +64,6 @@ public class Product {
     public void setImages(List<String> images) {
         this.images = images;
     }
-
-    @ElementCollection
-    private List<String> images; // URLs like http://localhost:8080/images/p1.jpg
 
     // Getters and setters
 }
