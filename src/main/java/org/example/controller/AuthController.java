@@ -5,6 +5,7 @@ import org.example.dto.auth.LoginRequest;
 import org.example.dto.auth.SignupRequest;
 import org.example.service.AuthService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,4 +28,7 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest req) {
         return ResponseEntity.ok(auth.login(req.getEmail(), req.getPassword()));
     }
+
+
+
 }

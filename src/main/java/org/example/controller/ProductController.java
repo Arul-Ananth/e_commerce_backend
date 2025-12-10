@@ -1,55 +1,63 @@
 package org.example.controller;
 
 import org.example.model.Product;
-import org.example.model.Review;
-import org.example.repository.ProductRepository;
 import org.example.service.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/api/v1")
 @CrossOrigin(origins = {"http://localhost:5173", "http://192.168.1.4:5173"})
-// frontend
 public class ProductController {
-    @Autowired
-    private final ProductService service;
 
-   
-    @Autowired
-    private ProductRepository productRepo;
+    private final ProductService service;
 
     public ProductController(ProductService service) {
         this.service = service;
     }
 
-    @GetMapping("/{id}")
-    public Product getProduct(@PathVariable Long id) {
-        return service.getProductById(id);
-    }
-
-    //CHECK THE FORMAT OF THE OUTPUT
-    @GetMapping("/reviews/{id}")
-    public List<Review> getReviews(@PathVariable Long id) {
-        return service.getReviewsByProductId(id);
-    }
-    @GetMapping("/list")
+    // GET /api/v1/products
+    @GetMapping("/products")
     public List<Product> getAllProducts() {
-        return productRepo.findAll();
+        return service.getAllProducts();
     }
 
+    // GET /api/v1/products/{id}
+    @GetMapping("/products/{id}")
+    public ResponseEntity<Product> getProduct(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getProductById(id));
+    }
+
+    // GET /api/v1/categories
     @GetMapping("/categories")
-    public List<String> getAllCategories() {
+    public List<String> getCategories() {
         return service.getAllCategories();
     }
 
-    @GetMapping("/category/{categoryName}")
-    public List<Product> getProductsByCategory(@PathVariable String categoryName) {
-        return productRepo.findByCategory(categoryName);
+    // GET /api/v1/products?category=Electronics (Optional filter style)
+    // or GET /api/v1/products/category/{name}
+    @GetMapping("/products/category/{categoryName}")
+    public List<Product> getByCategory(@PathVariable String categoryName) {
+        return service.getProductsByCategory(categoryName);
     }
 
+    // --- Admin Endpoints ---
 
+    @PostMapping("/products")
+    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+        return ResponseEntity.status(201).body(service.createProduct(product));
+    }
 
+    @PutMapping("/products/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
+        return ResponseEntity.ok(service.updateProduct(id, product));
+    }
+
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        service.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
 }

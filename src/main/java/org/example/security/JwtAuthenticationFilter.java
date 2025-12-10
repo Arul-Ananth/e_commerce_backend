@@ -41,8 +41,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Jws<Claims> jws = jwtService.parseToken(token);
                 String userId = jws.getBody().getSubject();
                 userRepository.findById(Long.parseLong(userId)).ifPresent(user -> {
+
+                    // CHANGE: pass user.getAuthorities() instead of emptyList()
                     var authentication = new UsernamePasswordAuthenticationToken(
-                            user, null, Collections.emptyList());
+                            user,
+                            null,
+                            user.getAuthorities()); // This loads the roles (ROLE_ADMIN, etc.)
+
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 });
